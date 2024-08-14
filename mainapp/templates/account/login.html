@@ -1,0 +1,100 @@
+    {% load i18n %}
+    {% load allauth account %}
+    {% load bootstrap5 %}
+    {% load socialaccount %}
+
+    {% block head %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% trans "Sign In" %} - Honor Code Violation Report Website</title>
+    {% bootstrap_css %}
+    <style>
+        body {
+            background-color: #f4f4f4;
+        }
+        .navbar {
+            background-color: #007bff;
+            color: white;
+            margin-bottom: 20px;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            margin: 20px auto;
+            text-align: center;
+        }
+        .btn-primary {
+            margin-bottom: 10px;
+            width: 100%;
+            background-color: #007bff; /* Consistent button color */
+        }
+        .form-control {
+            border-radius: 0.25rem;
+            margin-bottom: 10px; /* Spacing between form fields */
+        }
+         a {
+        color: #007bff; /* Link color */
+        text-decoration: none; /* Remove underline by default */
+        transition: opacity 0.3s; /* Smooth transition for opacity */
+    }
+
+    a:hover {
+        text-decoration: underline; /* Underline link on hover */
+    }
+    </style>
+    {% endblock head %}
+
+    {% block content %}
+    <nav class="navbar navbar-expand-lg">
+        <div class="container-fluid">
+            <span class="navbar-brand mb-0 h1">Honor Code Violation Report Website</span>
+            <div class="user-info dropdown">
+                {% if user.is_authenticated %}
+                <a href="#" class="dropdown-toggle text-white" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    {{ user.username }}
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                    <li><a class="dropdown-item" href="#">Account Details</a></li>
+                    <li><form action="{% url 'logout' %}" method="post">
+                        {% csrf_token %}
+                        <button type="submit" class="dropdown-item">Logout</button>
+                    </form></li>
+                </ul>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+   <div class="container">
+    <h1>{% trans "Sign In" %}</h1>
+    <p>
+        {% blocktrans %}If you have not created an account yet, then please
+        <a href="{{ signup_url }}">sign up</a> first.{% endblocktrans %}
+    </p>
+
+    <form method="post" action="{% url 'account_login' %}" class="form-signin">
+        {% csrf_token %}
+        <div class="form-group">
+            <input type="text" name="login" class="form-control" id="id_login"
+                   placeholder="{% trans 'Username' %}" required autofocus>
+        </div>
+        <div class="form-group">
+            <input type="password" name="password" class="form-control" id="id_password"
+                   placeholder="{% trans 'Password' %}" required>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">{% trans "Sign In" %}</button>
+    </form>
+
+    {% if SOCIALACCOUNT_ENABLED %}
+        <div class="mt-2">
+            <a href="{% provider_login_url 'google' %}" class="btn btn-primary btn-block">Login With Google</a>
+        </div>
+    {% endif %}
+</div>
+
+    {% bootstrap_javascript %}
+    {% include 'footer_absolute.html' %}
+    {% endblock content %}

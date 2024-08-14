@@ -1,0 +1,104 @@
+{% load i18n %}
+{% load bootstrap5 %}
+{% load socialaccount %}
+
+{% block head_title %}
+<title>{% trans "Signup" %} - Honor Code Violation Report Website</title>
+{% endblock head_title %}
+
+{% block head %}
+{% bootstrap_css %}
+<style>
+    body {
+        background-color: #f4f4f4;
+    }
+    .navbar {
+        background-color: #007bff;
+        color: white;
+        margin-bottom: 20px;
+    }
+    .container {
+        background-color: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        max-width: 600px;
+        margin: 20px auto;
+        text-align: center;
+    }
+    .btn-primary {
+        margin-bottom: 10px;
+        width: 100%;
+        background-color: #007bff;
+    }
+    .form-control {
+        border-radius: 0.25rem;
+        margin-bottom: 10px;
+    }
+    .form-group {
+        margin-bottom: 15px;
+    }
+    ul, li {
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+    }
+    .invalid-feedback {
+        display: block;
+        width: 100%;
+        margin-top: .25rem;
+        font-size: .875em;
+        color: #dc3545;
+    }
+    .login-link {
+        color: #007bff;
+        text-decoration: none;
+    }
+    .login-link:hover {
+        text-decoration: underline;
+    }
+</style>
+{% endblock head %}
+
+{% block content %}
+<nav class="navbar navbar-expand-lg">
+    <div class="container-fluid">
+        <span class="navbar-brand mb-0 h1">Honor Code Violation Report Website</span>
+    </div>
+</nav>
+
+<div class="container">
+    <h1>{% trans "Sign Up" %}</h1>
+    <p>
+        {% blocktrans %}Already have an account? Then please <a href="{{ login_url }}" class="login-link">sign in</a>.{% endblocktrans %}
+    </p>
+
+    <form method="post" action="{% url 'account_signup' %}" class="form-signup">
+        {% csrf_token %}
+        {% for field in form %}
+        <div class="form-group">
+            <input type="{{ field.field.widget.input_type }}" name="{{ field.name }}"
+                   class="form-control {{ field.field.widget.attrs.class }}"
+                   id="{{ field.auto_id }}"
+                   placeholder="{{ field.label }}"
+                   {% if field.field.required %}required{% endif %}
+                   {% if field.is_hidden %}type="hidden"{% endif %}>
+            {% if field.help_text %}
+            <small class="form-text text-muted">{{ field.help_text }}</small>
+            {% endif %}
+            {% for error in field.errors %}
+            <div class="invalid-feedback">{{ error }}</div>
+            {% endfor %}
+        </div>
+        {% endfor %}
+        <button type="submit" class="btn btn-primary btn-block">{% trans "Sign Up" %}</button>
+    </form>
+
+    {% if SOCIALACCOUNT_ENABLED %}
+        {% include "socialaccount/snippets/login.html" with page_layout="entrance" %}
+    {% endif %}
+</div>
+
+{% bootstrap_javascript %}
+{% include 'footer.html' %}
+{% endblock content %}

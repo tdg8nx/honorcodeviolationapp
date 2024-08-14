@@ -1,0 +1,120 @@
+{% load bootstrap5 %}
+{% load socialaccount %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Dashboard</title>
+    {% bootstrap_css %}
+    <style>
+        html, body {
+    height: 100%; /* Ensures the full height of the viewport */
+    margin: 0; /* Reset default margin */
+    padding: 0; /* Reset default padding */
+    display: flex;
+    flex-direction: column; /* Stack children vertically */
+}
+        body {
+    min-height: 100vh; /* Minimum height of 100% of the viewport height */
+    display: flex;
+    flex-direction: column; /* Arrange content and footer in a column */
+}
+        .main-content {
+    flex: 1; /* Allows the main content to expand and push the footer downward */
+}
+        .navbar {
+            margin-bottom: 20px;
+            background-color: #007bff;
+            color: white;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .card {
+            margin-bottom: 20px;
+            position: relative;
+        }
+        .badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            color: white;
+        }
+        .badge-new {
+            background-color: #28a745;
+        }
+        .badge-in-progress {
+            background-color: #ffc107;
+        }
+        .badge-resolved {
+            background-color: #dc3545;
+        }
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .profile-icon {
+            width: 32px;
+            height: 32px;
+            background-color: #ffffff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: #007bff;
+        }
+        .navbar .dropdown-menu {
+            right: 0; /* Align the dropdown menu to the right of the dropdown button */
+        }
+    </style>
+</head>
+<body>
+
+
+<nav class="navbar">
+    <div class="container-fluid">
+        <span class="navbar-brand mb-0 h1">Admin Dashboard</span>
+        <div class="user-info dropdown">
+
+            <a href="#" class="dropdown-toggle text-white" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                {{ user.username }}
+            </a>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                <li><a class="dropdown-item" href="{% url 'admin_account_details' %}">Account Details</a></li>
+                <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
+
+            </ul>
+        </div>
+    </div>
+</nav>
+<div class="main-content">
+<div class="container">
+    {% for violation in violations %}
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Name: {{ violation.name }}</h5>
+                <h6 class="card-subtitle mb-2 text-muted">Date of Incident: {{ violation.date_of_incident }}</h6>
+                <p class="card-text">Description: {{ violation.description }}</p>
+                {% if violation.user.username %}
+                <p>Submitted by: {{ violation.user.username }}</p>
+                {% else %}
+                <p>Submitted anonymously</p>
+                {% endif %}
+                <a href="{% url 'violation_detail' violation.id %}" class="btn btn-primary">View Details</a>
+            </div>
+            <span class="badge {% if violation.status == 'new' %}badge-new{% elif violation.status == 'in_progress' %}badge-in-progress{% elif violation.status == 'resolved' %}badge-resolved{% else %}badge-secondary{% endif %}">
+                {{ violation.status }}
+            </span>
+        </div>
+    {% endfor %}
+</div>
+</div>
+{% bootstrap_javascript %}
+{% include 'footer.html' %}
+</body>
+</html>

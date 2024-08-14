@@ -1,0 +1,116 @@
+{% load bootstrap5 %}
+{% load socialaccount %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Honor Code Violation Report Website</title>
+    {% bootstrap_css %}
+    <style>
+        body {
+            background-color: #f4f4f4;
+        }
+        .navbar {
+            background-color: #007bff;
+            color: white;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+            max-width: 600px;
+            margin: 20px auto;
+            text-align: center;
+        }
+        .btn {
+            margin-bottom: 10px;
+            width: 100%;
+        }
+        .profile-icon {
+            width: 32px;
+            height: 32px;
+            background-color: #ffffff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: #007bff;
+        }
+        .dropdown-menu {
+            text-align: left;
+        }
+        .navbar .dropdown {
+            position: static;
+        }
+        .navbar .dropdown-menu {
+            right: 0;
+            left: auto;
+        }
+        .school-project-banner {
+            background-color: red;
+            color: white;
+            text-align: center;
+            padding: 10px;
+            font-size: 1.2em;
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg">
+    <div class="container-fluid">
+        <span class="navbar-brand mb-0 h1">Honor Code Violation Report Website</span>
+        <div class="user-info dropdown">
+            {% if user.is_authenticated %}
+            <a href="#" class="dropdown-toggle text-white" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                {{ user.username }}
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                {% if is_site_admin %}
+                <li><a class="dropdown-item" href="{% url 'admin_account_details' %}">Account Details</a></li>
+                {% else %}
+                <li><a class="dropdown-item" href="{% url 'account_details' %}">Account Details</a></li>
+                {% endif %}
+                <li><form action="{% url 'logout' %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="dropdown-item">Logout</button>
+                </form></li>
+                {% if not is_site_admin %}
+                <li><a href="{% url 'user_violations' %}" class="dropdown-item">Dashboard</a></li>
+                {% endif %}
+            </ul>
+            {% endif %}
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+    <h1 class="my-4">Welcome to the Honor Code Violation Report Website</h1>
+    {% if user.is_authenticated %}
+        <p>Welcome, you are logged in as {{ user.username }}</p>
+        {% if is_site_admin %}
+            <a href="{% url 'admin_dashboard_url' %}" class="btn btn-primary mb-2">Go to Admin Dashboard</a>
+        {% else %}
+            <a href="{% url 'user_violations' %}" class="btn btn-primary mb-2">Go to User Dashboard</a>
+            <a href="{% url 'user_dashboard_url' %}" class="btn btn-primary mb-2">Submit a Violation</a>
+        {% endif %}
+    {% else %}
+        <div class="mb-2">
+            <a href="{% url 'user_dashboard_url' %}" class="btn btn-secondary">Submit a form anonymously</a>
+        </div>
+        <div>
+            <a href="{% provider_login_url 'google' %}" class="btn btn-primary">Login / Sign Up</a>
+        </div>
+    {% endif %}
+</div>
+
+{% bootstrap_javascript %}
+{% include 'footer_absolute.html' %}
+
+</body>
+</html>

@@ -1,0 +1,103 @@
+{% load i18n %}
+{% load allauth %}
+{% load bootstrap5 %}
+{% load socialaccount %}
+
+{% block head_title %}
+<title>{% if process == "connect" %}{% trans "Connect Account" %}{% else %}{% trans "Sign In" %}{% endif %} - Honor Code Violation Report Website</title>
+{% endblock head_title %}
+
+{% block head %}
+{% bootstrap_css %}
+<style>
+    body {
+        background-color: #f4f4f4;
+    }
+    .navbar {
+        background-color: #007bff;
+        color: white;
+        margin-bottom: 20px;
+    }
+    .container {
+        background-color: white;
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        max-width: 600px;
+        margin: 20px auto;
+        text-align: center;
+    }
+    .btn-primary {
+        margin-bottom: 20px;
+        width: 100%;
+        background-color: #0069d9;
+        border-color: #0062cc;
+    }
+    .btn-primary:hover {
+        background-color: #0056b3;
+        border-color: #004f9f;
+    }
+    .form-control {
+        border-radius: 0.25rem;
+        margin-bottom: 10px;
+    }
+    .form-group {
+        margin-bottom: 15px;
+    }
+    ul, li {
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+    }
+    .invalid-feedback {
+        display: block;
+        width: 100%;
+        margin-top: .25rem;
+        font-size: .875em;
+        color: #dc3545;
+    }
+    .btn-link {
+        color: #007bff;
+        text-decoration: none;
+    }
+    .btn-link:hover {
+        text-decoration: underline;
+    }
+</style>
+{% endblock head %}
+
+{% block content %}
+<nav class="navbar navbar-expand-lg">
+    <div class="container-fluid">
+        <span class="navbar-brand mb-0 h1">Honor Code Violation Report Website</span>
+    </div>
+</nav>
+
+<div class="container">
+    {% if process == "connect" %}
+        <h1>{% blocktrans with provider.name as provider %}Connect {{ provider }}{% endblocktrans %}</h1>
+        <p>{% blocktrans with provider.name as provider %}You are about to connect a new third-party account from {{ provider }}.{% endblocktrans %}</p>
+    {% else %}
+        <h1>{% blocktrans with provider.name as provider %}Sign In Via {{ provider }}{% endblocktrans %}</h1>
+        <p>{% blocktrans with provider.name as provider %}You are about to sign in using a third-party account from {{ provider }}.{% endblocktrans %}</p>
+    {% endif %}
+
+    <form method="post" action="">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-primary btn-lg">{% trans "Continue" %}</button>
+    </form>
+
+    <!-- Add Sign In and Sign Up links -->
+    <div class="mt-4">
+        <p>
+            <a href="{% url 'account_login' %}" class="btn btn-link">{% trans "Have a non-google account?" %}</a>
+        </p>
+        <p>
+            <a href="{% url 'account_signup' %}" class="btn btn-link">{% trans "Sign up with a non-google account" %}</a>
+        </p>
+    </div>
+</div>
+
+{% bootstrap_javascript %}
+{% include 'footer_absolute.html' %}
+{% endblock content %}

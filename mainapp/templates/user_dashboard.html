@@ -1,0 +1,117 @@
+{% load bootstrap5 %}
+{% load socialaccount %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Report a Violation</title>
+    {% bootstrap_css %}
+    <style>
+        body {
+            background-color: #f4f4f4;
+        }
+        .navbar {
+            background-color: #007bff;
+            color: white;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+        }
+        .form-text {
+            color: #6c757d;
+        }
+        .invalid-feedback {
+            display: block;
+            color: #dc3545;
+        }
+        .profile-icon {
+            width: 32px;
+            height: 32px;
+            background-color: #ffffff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: #007bff;
+            margin-right: 10px;
+        }
+        .user-info {
+            display: flex;
+            align-items: center;
+        }
+        .dropdown-menu {
+            right: 0;
+            left: auto;
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar">
+    <div class="container-fluid">
+        <span class="navbar-brand mb-0 h1">Report a Violation</span>
+        <div class="user-info">
+            <!-- <div class="profile-icon" title="User Profile">
+                <i class="fas fa-user"></i>
+            </div> -->
+            <div class="dropdown">
+                <a href="#" class="dropdown-toggle text-white" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    {{ user.username }}
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                    <li><a href="{% url 'user_violations' %}" class="dropdown-item">Dashboard</a></li>
+                    <li><a class="dropdown-item" href="{% url 'account_details' %}">Account Details</a></li>
+                    <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
+
+                </ul>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+    <h1>Report a Violation</h1>
+    <form method="post" enctype="multipart/form-data" class="mt-3">
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+            <div class="alert alert-danger">
+                <strong>Errors:</strong>
+                {% for error in form.non_field_errors %}
+                    <p>{{ error }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        {% for field in form %}
+            <div class="mb-3">
+                <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                {{ field }}
+                {% if field.name == 'date_of_incident' %}
+                    <div class="form-text">Please enter the date in the format: MM-DD-YYYY.</div>
+                {% endif %}
+                {% if field.help_text %}
+                    <div class="form-text">{{ field.help_text }}</div>
+                {% endif %}
+                {% if field.name == 'class_name' %}
+                <div class="form-text">Optional: Enter the class associated with this violation (if applicable).</div>
+                {% endif %}
+                {% if field.errors %}
+                    {% for error in field.errors %}
+                        <div class="invalid-feedback">{{ error }}</div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+        {% endfor %}
+        <button type="submit" class="btn btn-primary">Submit Violation</button>
+    </form>
+</div>
+
+{% bootstrap_javascript %}
+{% include 'footer.html' %}
+</body>
+</html>

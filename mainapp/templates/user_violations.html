@@ -1,0 +1,120 @@
+{% load bootstrap5 %}
+{% load socialaccount %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>User Violations</title>
+    {% bootstrap_css %}
+    <style>
+        html, body {
+    height: 100%; /* Ensures the full height of the viewport */
+    margin: 0; /* Reset default margin */
+    padding: 0; /* Reset default padding */
+    display: flex;
+    flex-direction: column; /* Stack children vertically */
+}
+        body {
+    min-height: 100vh; /* Minimum height of 100% of the viewport height */
+    display: flex;
+    flex-direction: column; /* Arrange content and footer in a column */
+}
+        .main-content {
+    flex: 1; /* Allows the main content to expand and push the footer downward */
+}
+        .navbar {
+            background-color: #007bff;
+            color: white;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+        }
+        .card {
+            margin-bottom: 20px;
+            position: relative;
+        }
+        .badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            color: white;
+        }
+        .badge-new {
+            background-color: #28a745;
+        }
+        .badge-in-progress {
+            background-color: #ffc107;
+        }
+        .badge-resolved {
+            background-color: #dc3545;
+        }
+        .profile-icon {
+            width: 32px;
+            height: 32px;
+            background-color: #ffffff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: #007bff;
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="container-fluid">
+        <span class="navbar-brand mb-0 h1">User Violations</span>
+        <div class="user-info">
+
+            <div class="dropdown">
+                <a href="#" class="dropdown-toggle text-white" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    {{ user.username }}
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                    <li><a class="dropdown-item" href="{% url 'user_dashboard_url' %}">Submit a Violation</a></li>
+                    <li><a class="dropdown-item" href="{% url 'account_details' %}">Account Details</a></li>
+                    <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</nav>
+<div class="main-content">
+<div class="container">
+    <h2>My Submitted Violations</h2>
+    {% if violations %}
+        {% for violation in violations %}
+            <div class="card">
+                <div class="card-body">
+                    
+                    <h5 class="card-title"><strong>Name:</strong> {{ violation.name }}</h5>
+                    
+                    <p class="card-title"><strong>Date of Incident:</strong> {{ violation.date_of_incident }}</p>
+                    <p class="card-text"><strong>Status:</strong> {{ violation.get_status_display }}</p>
+                    <p class="card-text"><strong>Resolution Notes:</strong> {{ violation.resolution_notes|default:"N/A" }}</p>
+                    <form action="{% url 'violation_delete' violation.id %}" method="post">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this violation?');">Delete</button>
+                    </form>
+                </div>
+                <span class="badge {% if violation.status == 'new' %}badge-new{% elif violation.status == 'in_progress' %}badge-in-progress{% elif violation.status == 'resolved' %}badge-resolved{% else %}badge-secondary{% endif %}">
+                    {{ violation.get_status_display }}
+                </span>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>You have not submitted any violations.</p>
+    {% endif %}
+</div>
+</div>
+
+{% bootstrap_javascript %}
+{% include 'footer.html' %}
+</body>
+</html>
